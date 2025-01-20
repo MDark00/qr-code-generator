@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Generator</title>
+  <style>
+    /* General Body Styling */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      direction: rtl;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    /* Container for the content */
+    #container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header Styling */
+    h1 {
+      font-size: 25px;
+      color: #0056b3;
+      margin-bottom: 20px;
+    }
+
+    /* Form Styling */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: calc(100% - 20px);
+      margin: 0 auto;
+    }
+
+    button {
+      background-color: #0056b3;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #004494;
+    }
+
+    /* Result Styling */
+    #qrResult {
+      margin-top: 20px;
+    }
+
+    img {
+      margin-top: 10px;
+      max-width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>مولد QR Code</h1>
+    <form id="qrForm">
+      <input type="text" id="qrText" placeholder="أدخل نص أو رابط" required />
+      <button type="submit">توليد QR Code</button>
+    </form>
+    <div id="qrResult">
+      <!-- سيتم عرض QR Code هنا -->
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('qrForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = document.getElementById('qrText').value;
+      
+      if (!text.trim()) {
+        alert('يرجى إدخال نص أو رابط.');
+        return;
+      }
+
+      try {
+        const response = await fetch('/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `text=${encodeURIComponent(text)}`,
+        });
+
+        const data = await response.json();
+        if (data.qrCode) {
+          document.getElementById('qrResult').innerHTML = `
+            <img src="${data.qrCode}" alt="QR Code" />
+          `;
+        } else {
+          alert('faild to generat QR Code.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert(' QR Code error.');
+      }
+    });
+  </script>
+</body>
+</html>
